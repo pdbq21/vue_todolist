@@ -9,21 +9,26 @@
         placeholder="TODO"
       />
     </div>
-    <div class="container_todo_list" v-if="todos.length">
+    <div class="container_todo_list" v-if="todosAll.length">
       <div
         class="container_todo_list-item"
         v-bind:class="{ 'item--complete': todo.complete }"
-        v-for="(todo, index) in todos"
+        v-for="(todo, index) in todosAll"
       >
-        <input type="checkbox" v-on:change="handleChange(index)">
+        <input type="checkbox" v-on:change="handleChange(index, todo.complete)">
         <span>{{todo.value}}</span>
         <button v-on:click="deleteTodo(index)">X</button>
       </div>
       <div class="container_todo_list-filter">
-        <div class="filters" v-on:click="handleFilter">
-          <span class="filters-item filters-item--active">All</span>
-          <span class="filters-item">Active</span>
-          <span class="filters-item">Complete</span>
+        <div class="filters">
+          <span
+            v-on:click="handleFilter(filter)"
+            v-for="filter in filters"
+            v-bind:class="{ 'filters-item--active': filter === activeFilter }"
+            class="filters-item"
+          >
+            {{filter}}
+          </span>
         </div>
       </div>
     </div>
@@ -36,7 +41,11 @@
     data() {
       return {
         input_val: '',
+        todosAll: [],
         todos: [],
+
+        filters: ['All', 'Active', 'Complete'],
+        activeFilter: 'All',
       };
     },
     methods: {
@@ -47,30 +56,21 @@
         }
       },
       addTodo() {
-        this.todos.push({
+        this.todosAll.push({
           value: this.input_val,
           complete: false,
         });
       },
       deleteTodo(index) {
-        this.todos.splice(index, 1);
+        this.todosAll.splice(index, 1);
       },
 
-      handleFilter({ target }) {
-        const filter = target.textContent;
-        if (filter === 'All') {
-// empty
-        } else if (filter === 'Active') {
-// empty
-        } else if (filter === 'Complete') {
-// empty
-        } else {
-          console.error(`Error: this ${filter} not yet`);
-        }
+      handleFilter(filter) {
+        this.activeFilter = filter;
       },
 
-      handleChange(index) {
-        this.todos[index].complete = !this.todos[index].complete;
+      handleChange(index, bool) {
+        this.todosAll[index].complete = !bool;
       },
     },
   };
@@ -113,8 +113,8 @@
     padding: 5px 10px;
   }
 
-  .item--complete{
-  background: aliceblue;
+  .item--complete {
+    background: aliceblue;
   }
 
   .container_todo_list-filter {
