@@ -9,10 +9,22 @@
         placeholder="TODO"
       />
     </div>
-    <div class="container_todo_list">
-      <div class="container_todo_list-item" v-for="(todo, index) in todos">
+    <div class="container_todo_list" v-if="todos.length">
+      <div
+        class="container_todo_list-item"
+        v-bind:class="{ 'item--complete': todo.complete }"
+        v-for="(todo, index) in todos"
+      >
+        <input type="checkbox" v-on:change="handleChange(index)">
         <span>{{todo.value}}</span>
         <button v-on:click="deleteTodo(index)">X</button>
+      </div>
+      <div class="container_todo_list-filter">
+        <div class="filters" v-on:click="handleFilter">
+          <span class="filters-item filters-item--active">All</span>
+          <span class="filters-item">Active</span>
+          <span class="filters-item">Complete</span>
+        </div>
       </div>
     </div>
   </div>
@@ -43,6 +55,23 @@
       deleteTodo(index) {
         this.todos.splice(index, 1);
       },
+
+      handleFilter({ target }) {
+        const filter = target.textContent;
+        if (filter === 'All') {
+// empty
+        } else if (filter === 'Active') {
+// empty
+        } else if (filter === 'Complete') {
+// empty
+        } else {
+          console.error(`Error: this ${filter} not yet`);
+        }
+      },
+
+      handleChange(index) {
+        this.todos[index].complete = !this.todos[index].complete;
+      },
     },
   };
 </script>
@@ -54,9 +83,10 @@
     min-width: 25em;
   }
 
-  .container_form{
+  .container_form {
     display: flex;
   }
+
   .container_form-input {
     height: 2em;
     flex-grow: 1;
@@ -83,4 +113,27 @@
     padding: 5px 10px;
   }
 
+  .item--complete{
+  background: aliceblue;
+  }
+
+  .container_todo_list-filter {
+    justify-content: center;
+    display: flex;
+  }
+
+  .filters {
+    margin-top: 10px;
+  }
+
+  .filters-item {
+    border: 1px solid #2c3e50;
+    border-radius: 5px;
+    padding: 3px 5px;
+    cursor: pointer;
+  }
+
+  .filters-item--active {
+    border: 2px solid #42b983;
+  }
 </style>
