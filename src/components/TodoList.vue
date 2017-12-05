@@ -31,7 +31,12 @@
             {{filter}}
           </span>
         </div>
-        <span class="clear_complete">Clear complete</span>
+        <span
+          class="clear_complete"
+          v-on:click="handleClearComplete"
+        >
+          Clear complete
+        </span>
       </div>
     </div>
   </div>
@@ -51,13 +56,13 @@
     },
 // lifecycle:
     beforeCreate() {
-      console.log('beforeCreate');
+      // console.log('beforeCreate');
     },
     created() {
-      console.log('created');
+      // console.log('created');
     },
     beforeUpdate() {
-      console.log('beforeUpdate');
+      // console.log('beforeUpdate');
     },
     updated() {
       // console.log('updated');
@@ -109,6 +114,9 @@
       itemsLeft() {
         const items = this.todosAll.filter(({ complete }) => complete).length;
         return `${items} item${(items > 1) ? 's' : ''} left`;
+      },
+      handleClearComplete() {
+        this.todosAll = this.todosAll.filter(({ complete }) => !complete);
       },
     },
   };
