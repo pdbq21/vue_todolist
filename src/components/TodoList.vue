@@ -1,6 +1,12 @@
 <template>
-  <div class="container">
+  <div class="container" v-bind:class="{ 'list_empty': !todosAll.length }">
     <div class="container_form">
+      <i
+        class="material-icons selected_all"
+        v-bind:class="{ 'selected_all--active': !todosAll.length }"
+      >
+        &#xE877;
+      </i>
       <input
         class="container_form-input"
         type="text"
@@ -131,13 +137,16 @@
 
   .container_form {
     display: flex;
+    height: 3em;
+    border: 1px solid;
+    align-items: center;
   }
 
   .container_form-input {
-    height: 2em;
     flex-grow: 1;
-    padding: 1px 10px;
     font-size: 25px;
+    border: none;
+    padding: 1px 10px;
   }
 
   .container_form-input:hover,
@@ -197,5 +206,21 @@
   .clear_complete:hover {
     cursor: pointer;
     border-bottom: 1px solid #42b983;
+  }
+
+  .selected_all--active {
+    color: #42b983;
+  }
+
+  .selected_all {
+    margin-left: 10px;
+    cursor: pointer;
+    font-size: 30px;
+    color: #2c3e50;
+    display: block;
+  }
+
+  .list_empty .selected_all {
+    display: none;
   }
 </style>
