@@ -15,7 +15,7 @@
         v-bind:class="{ 'item--complete': todo.complete }"
         v-for="(todo, index) in filtersTodo(todosAll)"
       >
-        <input type="checkbox"  v-on:change="handleChange(index, todo.complete)">
+        <input type="checkbox"  v-bind:checked="todo.complete" v-on:change="handleChange(index, todo.complete)">
         <span>{{todo.value}}</span>
         <button v-on:click="deleteTodo(index)">X</button>
       </div>
