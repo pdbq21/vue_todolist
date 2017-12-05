@@ -13,9 +13,9 @@
       <div
         class="container_todo_list-item"
         v-bind:class="{ 'item--complete': todo.complete }"
-        v-for="(todo, index) in todosAll"
+        v-for="(todo, index) in filtersTodo(todosAll)"
       >
-        <input type="checkbox" v-on:change="handleChange(index, todo.complete)">
+        <input type="checkbox"  v-on:change="handleChange(index, todo.complete)">
         <span>{{todo.value}}</span>
         <button v-on:click="deleteTodo(index)">X</button>
       </div>
@@ -42,11 +42,28 @@
       return {
         input_val: '',
         todosAll: [],
-        todos: [],
 
         filters: ['All', 'Active', 'Complete'],
         activeFilter: 'All',
       };
+    },
+// lifecycle:
+    beforeCreate() {
+      console.log('beforeCreate');
+    },
+    created() {
+      console.log('created');
+    },
+    beforeUpdate() {
+      console.log('beforeUpdate');
+    },
+    updated() {
+      // console.log('updated');
+      this.$nextTick(() => {
+        // Code that will run only after the
+        // entire view has been re-rendered
+        // console.log('$nextTick');
+      });
     },
     methods: {
       submit({ keyCode }) {
@@ -71,6 +88,18 @@
 
       handleChange(index, bool) {
         this.todosAll[index].complete = !bool;
+      },
+
+      filtersTodo(array) {
+        let temp;
+        if (this.activeFilter === 'Active') {
+          temp = array.filter(({ complete }) => !complete);
+        } else if (this.activeFilter === 'Complete') {
+          temp = array.filter(({ complete }) => complete);
+        } else {
+          temp = array;
+        }
+        return temp;
       },
     },
   };
