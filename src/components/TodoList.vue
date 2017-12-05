@@ -15,11 +15,12 @@
         v-bind:class="{ 'item--complete': todo.complete }"
         v-for="(todo, index) in filtersTodo(todosAll)"
       >
-        <input type="checkbox"  v-bind:checked="todo.complete" v-on:change="handleChange(index, todo.complete)">
+        <input type="checkbox" v-bind:checked="todo.complete" v-on:change="handleChange(index, todo.complete)">
         <span>{{todo.value}}</span>
         <button v-on:click="deleteTodo(index)">X</button>
       </div>
-      <div class="container_todo_list-filter">
+      <div class="container_todo_list-panel">
+        <span class="items_left">{{itemsLeft()}}</span>
         <div class="filters">
           <span
             v-on:click="handleFilter(filter)"
@@ -30,6 +31,7 @@
             {{filter}}
           </span>
         </div>
+        <span class="clear_complete">Clear complete</span>
       </div>
     </div>
   </div>
@@ -64,6 +66,9 @@
         // entire view has been re-rendered
         // console.log('$nextTick');
       });
+    },
+    computed: {
+// not update
     },
     methods: {
       submit({ keyCode }) {
@@ -100,6 +105,10 @@
           temp = array;
         }
         return temp;
+      },
+      itemsLeft() {
+        const items = this.todosAll.filter(({ complete }) => complete).length;
+        return `${items} item${(items > 1) ? 's' : ''} left`;
       },
     },
   };
@@ -146,13 +155,20 @@
     background: aliceblue;
   }
 
-  .container_todo_list-filter {
-    justify-content: center;
+  .container_todo_list-panel {
     display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 10px;
+    background: #2c3e50;
+    color: #fff;
+    height: 3em;
+    padding: 0 10px;
+    font-size: 14px;
   }
 
-  .filters {
-    margin-top: 10px;
+  .filters-item:hover {
+    border-bottom: 2px solid #42b983;
   }
 
   .filters-item {
@@ -164,5 +180,14 @@
 
   .filters-item--active {
     border: 2px solid #42b983;
+  }
+
+  .items_left {
+    cursor: default;
+  }
+
+  .clear_complete:hover {
+    cursor: pointer;
+    border-bottom: 1px solid #42b983;
   }
 </style>
