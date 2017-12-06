@@ -4,6 +4,7 @@
       <i
         class="material-icons selected_all"
         v-bind:class="{ 'selected_all--active': !todosAll.length }"
+        v-on:click="handleSelectedAll"
       >
         &#xE877;
       </i>
@@ -58,6 +59,7 @@
 
         filters: ['All', 'Active', 'Complete'],
         activeFilter: 'All',
+        selectedAll: false,
       };
     },
 // lifecycle:
@@ -89,6 +91,7 @@
         }
       },
       addTodo() {
+        this.selectedAll = false;
         this.todosAll.push({
           value: this.input_val,
           complete: false,
@@ -123,6 +126,15 @@
       },
       handleClearComplete() {
         this.todosAll = this.todosAll.filter(({ complete }) => !complete);
+      },
+      handleSelectedAll() {
+        const selectAllBool = !this.selectedAll;
+        this.todosAll.forEach((todo) => {
+          const newTodo = todo;
+          newTodo.complete = selectAllBool;
+          return newTodo;
+        });
+        this.selectedAll = selectAllBool;
       },
     },
   };
