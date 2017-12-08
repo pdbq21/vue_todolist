@@ -8,11 +8,9 @@
 <script>
   import TodoList from './components/TodoList';
 
-  console.log(TodoList);
   export default {
     components: { TodoList },
     name: 'app',
-    component: { TodoList },
   };
 </script>
 

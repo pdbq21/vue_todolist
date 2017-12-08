@@ -1,31 +1,19 @@
 <template>
-  <div class="container" v-bind:class="{ 'list_empty': !todosAll.length }">
-    <div class="container_form">
-      <i
-        class="material-icons selected_all"
-        v-bind:class="{ 'selected_all--active': !todosAll.length }"
-        v-on:click="handleSelectedAll"
-      >
-        &#xE877;
-      </i>
-      <input
-        class="container_form-input"
-        type="text"
-        v-model="input_val"
-        v-on:keydown="submit"
-        placeholder="TODO"
-      />
-    </div>
-    <div class="container_todo_list" v-if="todosAll.length">
-      <div
+  <div class="container" v-bind:class="{ 'list_empty': !todos.length }">
+    <td-form
+      v-on:submitInput="addTodo"
+    ></td-form>
+    <div class="container_todo_list" v-if="todos.length">
+     <!-- <div
         class="container_todo_list-item"
-        v-bind:class="{ 'item--complete': todo.complete }"
-        v-for="(todo, index) in filtersTodo(todosAll)"
+        v-bind:class="{ 'item&#45;&#45;complete': todo.complete }"
+        v-for="(todo, index) in filtersTodo(todos)"
       >
         <input type="checkbox" v-bind:checked="todo.complete" v-on:change="handleChange(index, todo.complete)">
         <span>{{todo.value}}</span>
-        <button v-on:click="deleteTodo(index)">X</button>
-      </div>
+        <i class='material-icons' v-on:click="deleteTodo(index)">clear</i>
+      </div>-->
+      <td-item></td-item>
       <div class="container_todo_list-panel">
         <span class="items_left">{{itemsLeft()}}</span>
         <div class="filters">
@@ -50,12 +38,16 @@
 </template>
 
 <script>
+  import TodoForm from './Form';
+  import TodoItem from './Item';
+
+  console.log(TodoForm);
   export default {
     name: 'todo-list',
+    components: { 'td-form': TodoForm, 'td-item': TodoItem },
     data() {
       return {
-        input_val: '',
-        todosAll: [],
+        todos: [],
 
         filters: ['All', 'Active', 'Complete'],
         activeFilter: 'All',
@@ -67,7 +59,7 @@
       // console.log('beforeCreate');
     },
     created() {
-      // console.log('created');
+      console.log('created', this);
     },
     beforeUpdate() {
       // console.log('beforeUpdate');
@@ -84,21 +76,15 @@
 // not update
     },
     methods: {
-      submit({ keyCode }) {
-        if (keyCode === 13) {
-          this.addTodo();
-          this.input_val = '';
-        }
-      },
-      addTodo() {
+      addTodo(todoValue) {
         this.selectedAll = false;
-        this.todosAll.push({
-          value: this.input_val,
+        this.todos.push({
+          value: todoValue,
           complete: false,
         });
       },
       deleteTodo(index) {
-        this.todosAll.splice(index, 1);
+        this.todos.splice(index, 1);
       },
 
       handleFilter(filter) {
@@ -106,7 +92,7 @@
       },
 
       handleChange(index, bool) {
-        this.todosAll[index].complete = !bool;
+        this.todos[index].complete = !bool;
       },
 
       filtersTodo(array) {
@@ -121,15 +107,15 @@
         return temp;
       },
       itemsLeft() {
-        const items = this.todosAll.filter(({ complete }) => complete).length;
+        const items = this.todos.filter(({ complete }) => complete).length;
         return `${items} item${(items > 1) ? 's' : ''} left`;
       },
       handleClearComplete() {
-        this.todosAll = this.todosAll.filter(({ complete }) => !complete);
+        this.todos = this.todos.filter(({ complete }) => !complete);
       },
       handleSelectedAll() {
         const selectAllBool = !this.selectedAll;
-        this.todosAll.forEach((todo) => {
+        this.todos.forEach((todo) => {
           const newTodo = todo;
           newTodo.complete = selectAllBool;
           return newTodo;
@@ -137,6 +123,7 @@
         this.selectedAll = selectAllBool;
       },
     },
+
   };
 </script>
 
@@ -147,41 +134,9 @@
     min-width: 25em;
   }
 
-  .container_form {
-    display: flex;
-    height: 3em;
-    border: 1px solid;
-    align-items: center;
-  }
-
-  .container_form-input {
-    flex-grow: 1;
-    font-size: 25px;
-    border: none;
-    padding: 1px 10px;
-  }
-
-  .container_form-input:hover,
-  .container_form-input:focus {
-    outline: none;
-  }
-
   .container_todo_list {
     display: flex;
     flex-direction: column;
-  }
-
-  .container_todo_list-item {
-    font-size: 24px;
-    display: flex;
-    justify-content: space-between;
-    height: 2em;
-    align-items: center;
-    padding: 5px 10px;
-  }
-
-  .item--complete {
-    background: aliceblue;
   }
 
   .container_todo_list-panel {
@@ -218,21 +173,5 @@
   .clear_complete:hover {
     cursor: pointer;
     border-bottom: 1px solid #42b983;
-  }
-
-  .selected_all--active {
-    color: #42b983;
-  }
-
-  .selected_all {
-    margin-left: 10px;
-    cursor: pointer;
-    font-size: 30px;
-    color: #2c3e50;
-    display: block;
-  }
-
-  .list_empty .selected_all {
-    display: none;
   }
 </style>
