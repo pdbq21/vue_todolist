@@ -1,18 +1,14 @@
 <template>
-  <div class="container" v-bind:class="{ 'list_empty': !todos.length }">
+  <div class="container">
     <td-form
       v-on:submitInput="addTodo"
       @onSelectedAll="handleSelectedAll"
-      isSelected="selectedAll"
+      :isSelected="selectedAll"
     ></td-form>
-    <div class="container_todo_list" v-if="todos.length">
-      <td-item
-        v-for="(todo, index) in filtersTodo(todos)"
-        :data="todo"
-        :key="`key-${index}`"
-        @onCheckbox="handleChange(index)"
-        @onDelete="deleteTodo(index)"
-      ></td-item>
+    <div class="container_todo_list">
+      <li
+        v-for="todo in todos"
+      >{{todo}}</li>
       <div class="container_todo_list-panel">
         <span class="items_left">{{itemsLeft()}}</span>
         <div class="filters">
@@ -45,7 +41,8 @@
     components: { 'td-form': TodoForm, 'td-item': TodoItem },
     data() {
       return {
-        todos: [],
+        rootId: 0,
+        todos: {},
 
         filters: ['All', 'Active', 'Complete'],
         activeFilter: 'All',
@@ -59,15 +56,18 @@
     created() {
       console.log('created', this);
     },
+    mounted() {
+      console.log(25);
+    },
     beforeUpdate() {
-      // console.log('beforeUpdate');
+      console.log('beforeUpdate');
     },
     updated() {
-      // console.log('updated');
+      console.log('updated', this.todos);
       this.$nextTick(() => {
         // Code that will run only after the
         // entire view has been re-rendered
-        // console.log('$nextTick');
+        console.log('$nextTick');
       });
     },
     computed: {
@@ -75,10 +75,14 @@
     },
     methods: {
       addTodo(todoValue) {
-        this.todos.push({
+        console.log(this.todos);
+        const ids = this.rootId;
+        this.todos[ids] = {
+          id: ids,
           value: todoValue,
           complete: false,
-        });
+        };
+        this.rootId += 1;
       },
       deleteTodo(index) {
         this.todos.splice(index, 1);
@@ -92,31 +96,32 @@
         this.todos[index].complete = !this.todos[index].complete;
       },
 
-      filtersTodo(array) {
-        let temp;
+      filtersTodo(data) {
+        console.log(data);
+        // let temp;
         if (this.activeFilter === 'Active') {
-          temp = array.filter(({ complete }) => !complete);
+          // temp = array.filter(({ complete }) => !complete);
         } else if (this.activeFilter === 'Complete') {
-          temp = array.filter(({ complete }) => complete);
+          // temp = array.filter(({ complete }) => complete);
         } else {
-          temp = array;
+          // temp = array;
         }
-        return temp;
+        return [];
       },
       itemsLeft() {
-        const items = this.todos.filter(({ complete }) => complete).length;
-        return `${items} item${(items > 1) ? 's' : ''} left`;
+        //  const items = this.todos.filter(({ complete }) => complete).length;
+        // return `${items} item${(items > 1) ? 's' : ''} left`;
       },
       handleClearComplete() {
-        this.todos = this.todos.filter(({ complete }) => !complete);
+        // this.todos = this.todos.filter(({ complete }) => !complete);
       },
       handleSelectedAll() {
         const bool = this.selectedAll;
-        this.todos.forEach((todo) => {
+        /* this.todos.forEach((todo) => {
           const newTodo = todo;
           newTodo.complete = !bool;
           return newTodo;
-        });
+        }); */
         this.selectedAll = !bool;
       },
     },

@@ -63,7 +63,7 @@
     outline: none;
   }
 
-  .selected_all--active {
+  .selected_all.selected_all--active {
     color: #42b983;
   }
 
@@ -73,10 +73,6 @@
     font-size: 30px;
     color: #2c3e50;
     display: block;
-  }
-
-  .list_empty .selected_all {
-    display: none;
   }
 
 </style>
