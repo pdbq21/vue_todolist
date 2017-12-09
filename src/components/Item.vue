@@ -1,18 +1,27 @@
 <template>
   <div
     class="container_todo_list-item"
-    v-bind:class="{ 'item--complete': todo.complete }"
-    v-for="(todo, index) in filtersTodo(todos)"
+    v-bind:class="{ 'item--complete': data.complete }"
   >
-    <input type="checkbox" v-bind:checked="todo.complete" v-on:change="handleChange(index, todo.complete)">
-    <span>{{todo.value}}</span>
-    <i class='material-icons' v-on:click="deleteTodo(index)">clear</i>
+    <input type="checkbox" v-bind:checked="data.complete" v-on:change="checkedItem" />
+    <span>{{data.value}}</span>
+    <i class='material-icons item-delete' v-on:click="deleteItem">clear</i>
   </div>
 </template>
 
 <script>
   export default {
     name: 'td-item',
+    props: ['data'],
+
+    methods: {
+      checkedItem() {
+        this.$emit('onCheckbox');
+      },
+      deleteItem() {
+        this.$emit('onDelete');
+      },
+    },
   };
 </script>
 
@@ -28,5 +37,13 @@
 
   .item--complete {
     background: aliceblue;
+  }
+
+  .item-delete{
+    cursor: pointer;
+  }
+
+  .item-delete:hover{
+    color: red;
   }
 </style>

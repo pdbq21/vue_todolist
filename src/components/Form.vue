@@ -2,6 +2,8 @@
   <div class="container_form">
     <i
       class="material-icons selected_all"
+      :class="{'selected_all--active': isSelected}"
+      @click="selected"
     >
       &#xE877;
     </i>
@@ -9,7 +11,7 @@
       class="container_form-input"
       type="text"
       placeholder="TODO"
-      :value="value"
+      v-model="value"
       @keydown="changeInput"
     />
   </div>
@@ -18,6 +20,7 @@
 <script>
   export default {
     name: 'td-form',
+    props: ['isSelected'],
     data() {
       return {
         value: '',
@@ -31,6 +34,9 @@
         } else {
           this.value = target.value;
         }
+      },
+      selected() {
+        this.$emit('onSelectedAll');
       },
     },
   };

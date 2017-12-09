@@ -2,18 +2,17 @@
   <div class="container" v-bind:class="{ 'list_empty': !todos.length }">
     <td-form
       v-on:submitInput="addTodo"
+      @onSelectedAll="handleSelectedAll"
+      isSelected="selectedAll"
     ></td-form>
     <div class="container_todo_list" v-if="todos.length">
-     <!-- <div
-        class="container_todo_list-item"
-        v-bind:class="{ 'item&#45;&#45;complete': todo.complete }"
+      <td-item
         v-for="(todo, index) in filtersTodo(todos)"
-      >
-        <input type="checkbox" v-bind:checked="todo.complete" v-on:change="handleChange(index, todo.complete)">
-        <span>{{todo.value}}</span>
-        <i class='material-icons' v-on:click="deleteTodo(index)">clear</i>
-      </div>-->
-      <td-item></td-item>
+        :data="todo"
+        :key="`key-${index}`"
+        @onCheckbox="handleChange(index)"
+        @onDelete="deleteTodo(index)"
+      ></td-item>
       <div class="container_todo_list-panel">
         <span class="items_left">{{itemsLeft()}}</span>
         <div class="filters">
@@ -41,7 +40,6 @@
   import TodoForm from './Form';
   import TodoItem from './Item';
 
-  console.log(TodoForm);
   export default {
     name: 'todo-list',
     components: { 'td-form': TodoForm, 'td-item': TodoItem },
@@ -77,7 +75,6 @@
     },
     methods: {
       addTodo(todoValue) {
-        this.selectedAll = false;
         this.todos.push({
           value: todoValue,
           complete: false,
@@ -91,8 +88,8 @@
         this.activeFilter = filter;
       },
 
-      handleChange(index, bool) {
-        this.todos[index].complete = !bool;
+      handleChange(index) {
+        this.todos[index].complete = !this.todos[index].complete;
       },
 
       filtersTodo(array) {
@@ -114,13 +111,13 @@
         this.todos = this.todos.filter(({ complete }) => !complete);
       },
       handleSelectedAll() {
-        const selectAllBool = !this.selectedAll;
+        const bool = this.selectedAll;
         this.todos.forEach((todo) => {
           const newTodo = todo;
-          newTodo.complete = selectAllBool;
+          newTodo.complete = !bool;
           return newTodo;
         });
-        this.selectedAll = selectAllBool;
+        this.selectedAll = !bool;
       },
     },
 
