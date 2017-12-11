@@ -7,7 +7,7 @@
     ></td-form>
     <div class="container_todo_list" v-if="!!todos.length">
       <td-item
-        v-for="(todo, index) in filtersTodo(todos)"
+        v-for="(todo, index) in filtersTodo()"
         :data="todo"
         v-bind:key="todo.id"
         @onCheckbox="handleCheckbox(index)"
@@ -37,6 +37,7 @@
 </template>
 
 <script>
+  // import { mapState } from 'vuex';
   import TodoForm from './Form';
   import TodoItem from './Item';
 
@@ -45,8 +46,8 @@
     components: { 'td-form': TodoForm, 'td-item': TodoItem },
     data() {
       return {
-        rootId: 0,
-        todos: [],
+        // rootId: 0,
+        // todos: [],
 
         filters: ['All', 'Active', 'Complete'],
         activeFilter: 'All',
@@ -58,10 +59,10 @@
       // console.log('beforeCreate');
     },
     created() {
-      console.log('created', this);
+      console.log('created', this.$store.state);
     },
     mounted() {
-      console.log(25);
+      console.log('mounted');
     },
     beforeUpdate() {
       console.log('beforeUpdate');
@@ -75,20 +76,14 @@
       });
     },
     computed: {
-// not update
+      todos() {
+        return this.$store.state.todos;
+      },
     },
     methods: {
       addTodo(todoValue) {
         console.log(this.todos);
-        const ids = this.rootId;
-        this.todos.push({
-          id: ids,
-          value: todoValue,
-          complete: false,
-        });
-
-        this.rootId += 1;
-        this.selectedAll = false;
+        this.$store.dispatch('addTodo', todoValue);
       },
       deleteTodo(index) {
         this.$delete(this.todos, index);
@@ -102,15 +97,12 @@
         this.todos[index].complete = !this.todos[index].complete;
       },
 
-      filtersTodo(data) {
-        console.log(data);
-        let temp;
+      filtersTodo() {
+        let temp = this.todos;
         if (this.activeFilter === 'Active') {
-          temp = data.filter(({ complete }) => !complete);
+          temp = temp.filter(({ complete }) => !complete);
         } else if (this.activeFilter === 'Complete') {
-          temp = data.filter(({ complete }) => complete);
-        } else {
-          temp = data;
+          temp = temp.filter(({ complete }) => complete);
         }
         return temp;
       },
