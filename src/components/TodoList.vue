@@ -5,10 +5,14 @@
       @onSelectedAll="handleSelectedAll"
       :isSelected="selectedAll"
     ></td-form>
-    <div class="container_todo_list">
-      <li
+    <div class="container_todo_list" v-if="Object.keys(todos).length !== 0">
+      <td-item
         v-for="todo in todos"
-      >{{todo}}</li>
+        :data="todo"
+        v-bind:key="todo.id"
+        @onCheckbox="handleCheckbox(todo.id)"
+        @onDelete="deleteTodo(todo.id)"
+      ></td-item>
       <div class="container_todo_list-panel">
         <span class="items_left">{{itemsLeft()}}</span>
         <div class="filters">
@@ -77,23 +81,30 @@
       addTodo(todoValue) {
         console.log(this.todos);
         const ids = this.rootId;
-        this.todos[ids] = {
-          id: ids,
-          value: todoValue,
-          complete: false,
-        };
-        this.rootId += 1;
+
+        this.todos = Object.assign({}, this.todos, {
+          [ids]: {
+            id: ids,
+            value: todoValue,
+            complete: false,
+          },
+        });
+
+        this.rootId = ids + 1;
       },
-      deleteTodo(index) {
-        this.todos.splice(index, 1);
+      deleteTodo(id) {
+        const cloneTodos = Object.assign({}, this.todos);
+        delete cloneTodos[id];
+        this.todos = cloneTodos;
+        // Vue.delete( target, key )
       },
 
       handleFilter(filter) {
         this.activeFilter = filter;
       },
 
-      handleChange(index) {
-        this.todos[index].complete = !this.todos[index].complete;
+      handleCheckbox(id) {
+        this.todos[id].complete = !this.todos[id].complete;
       },
 
       filtersTodo(data) {
