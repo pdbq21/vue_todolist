@@ -5,13 +5,13 @@
       @onSelectedAll="handleSelectedAll"
       :isSelected="selectedAll"
     ></td-form>
-    <div class="container_todo_list" v-if="Object.keys(todos).length !== 0">
+    <div class="container_todo_list" v-if="!!todos.length">
       <td-item
-        v-for="todo in todos"
+        v-for="(todo, index) in filtersTodo(todos)"
         :data="todo"
         v-bind:key="todo.id"
-        @onCheckbox="handleCheckbox(todo.id)"
-        @onDelete="deleteTodo(todo.id)"
+        @onCheckbox="handleCheckbox(index)"
+        @onDelete="deleteTodo(index)"
       ></td-item>
       <div class="container_todo_list-panel">
         <span class="items_left">{{itemsLeft()}}</span>
@@ -46,7 +46,7 @@
     data() {
       return {
         rootId: 0,
-        todos: {},
+        todos: [],
 
         filters: ['All', 'Active', 'Complete'],
         activeFilter: 'All',
@@ -81,58 +81,53 @@
       addTodo(todoValue) {
         console.log(this.todos);
         const ids = this.rootId;
-
-        this.todos = Object.assign({}, this.todos, {
-          [ids]: {
-            id: ids,
-            value: todoValue,
-            complete: false,
-          },
+        this.todos.push({
+          id: ids,
+          value: todoValue,
+          complete: false,
         });
 
-        this.rootId = ids + 1;
+        this.rootId += 1;
+        this.selectedAll = false;
       },
-      deleteTodo(id) {
-        const cloneTodos = Object.assign({}, this.todos);
-        delete cloneTodos[id];
-        this.todos = cloneTodos;
-        // Vue.delete( target, key )
+      deleteTodo(index) {
+        this.$delete(this.todos, index);
       },
 
       handleFilter(filter) {
         this.activeFilter = filter;
       },
 
-      handleCheckbox(id) {
-        this.todos[id].complete = !this.todos[id].complete;
+      handleCheckbox(index) {
+        this.todos[index].complete = !this.todos[index].complete;
       },
 
       filtersTodo(data) {
         console.log(data);
-        // let temp;
+        let temp;
         if (this.activeFilter === 'Active') {
-          // temp = array.filter(({ complete }) => !complete);
+          temp = data.filter(({ complete }) => !complete);
         } else if (this.activeFilter === 'Complete') {
-          // temp = array.filter(({ complete }) => complete);
+          temp = data.filter(({ complete }) => complete);
         } else {
-          // temp = array;
+          temp = data;
         }
-        return [];
+        return temp;
       },
       itemsLeft() {
-        //  const items = this.todos.filter(({ complete }) => complete).length;
-        // return `${items} item${(items > 1) ? 's' : ''} left`;
+        const items = this.todos.filter(({ complete }) => complete).length;
+        return `${items} item${(items > 1) ? 's' : ''} left`;
       },
       handleClearComplete() {
-        // this.todos = this.todos.filter(({ complete }) => !complete);
+        this.todos = this.todos.filter(({ complete }) => !complete);
       },
       handleSelectedAll() {
         const bool = this.selectedAll;
-        /* this.todos.forEach((todo) => {
+        this.todos = this.todos.map((todo) => {
           const newTodo = todo;
           newTodo.complete = !bool;
           return newTodo;
-        }); */
+        });
         this.selectedAll = !bool;
       },
     },
